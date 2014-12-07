@@ -1,0 +1,23 @@
+Source: seren
+Maintainer: Francesco Bonanno <spf.mibo.fra@gmail.com>
+Section: web
+Priority: extra
+Standards-Version: 3.9.5
+Build-Depends: debhelper (>= 9), libasound2-dev, libopus-dev, libogg-dev, libgmp-dev, libncurses5-dev, libncursesw5-dev
+Homepage: http://holdenc.altervista.org/seren/index.html
+
+Package: seren
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: simple VoIP program to create conferences from the terminal
+ Seren is a simple VoIP program based on the Opus codec that
+ allows you to create a voice conference from the terminal,
+ with up to 10 participants, without having to register
+ accounts, exchange emails, or add people to contact lists.
+ All you need to join an existing conference is the host
+ name or IP address of one of the participants.
+ Seren creates a dynamic peer-to-peer network of equivalent
+ nodes which exchange text and audio data using a udp
+ connection, and offers the user the ability to change the
+ quality/bitrate on the fly, encrypt the traffic and record
+ the calls.

@@ -1,0 +1,43 @@
+seren (0.0.21-parrot0) stable; urgency=low
+
+  * New stable upstream release.
+  * since version 0.0.21:
+        
+        - Engine version bump
+        - Added --without-ncurses option to configure
+        - Added VPATH build functionality
+        - Added selftest targets to Makefile
+        - Added input.{h,c} for unified command parsing
+        - Added tones.{h,c}
+        - Added /f command
+        - Added twofish block cipher
+        - Added support for round trip time (RTT) estimation
+        - Added reason field to REFUSE packets
+        - Added opus packets bandwidth and channels decoding
+        - Added bw/ch informations to ncurses lateral bar
+        - Use the same encipher/decipher functions for all key sizes in camellia
+        - Renamed config file option theme to ncurses_theme
+        - nc_init() now sets print and die callbacks
+        - Fixed fifout delay (now the fifo is opened in WRONLY mode)
+        - Fixed functions prototypes in random.{h,c}
+        - Small code improvements and fixes
+
+ -- Francesco Bonanno <spf.mibo.fra@gmail.com>  Sun, 7 Dec 2014 18:01:30 +0100
+
+seren (0.0.20-parrot0) stable; urgency=low
+
+  * New stable upstream release.
+  * since version 0.0.20:
+
+        - Added /v command
+        - Added event_type_verbose
+        - Fixed buffer overflow in all ciphers
+          when len is not a multiple of blocksize
+        - Improved ciphers selftest routine
+        - Factorized md5 code
+        - Fixed potential buffer overflow in packet_encrypt()
+        - Improved size check for received packets
+        - Changed prefix for functions in udp.c
+        - Other minor code changes
+
+ -- Francesco Bonanno <spf.mibo.fra@gmail.com>  Sat, 25 Oct 2014 23:19:46 +0100
