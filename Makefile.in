@@ -1,0 +1,140 @@
+# @configure_input@
+
+prefix          = @prefix@
+exec_prefix     = @exec_prefix@
+bindir          = @bindir@
+datarootdir     = @datarootdir@
+mandir          = @mandir@
+
+srcdir          = @srcdir@
+VPATH           = @srcdir@
+
+CC              = @CC@
+CFLAGS          = @CFLAGS@
+DEFS            = @DEFS@
+IDIR            = -I. -I$(srcdir)
+LIBS            = @LIBS@
+LDFLAGS         = @LDFLAGS@
+INSTALL         = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA    = @INSTALL_DATA@
+
+
+objects = common.o rw.o adsp.o tones.o slist.o msgbook.o md5.o xtea.o cast-128.o \
+ blowfish.o camellia.o twofish.o random.o dhm.o recording.o udp.o audio.o nc.o \
+ input.o stun.o pc-engine.o seren.o
+
+all: seren
+
+seren: $(objects)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o seren $(objects) $(LIBS)
+
+seren.o: seren.c config.h pc-engine.h udp.h audio.h slist.h dhm.h \
+ common.h msgbook.h input.h nc.h stun.h random.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/seren.c
+
+pc-engine.o: pc-engine.c pc-engine.h udp.h audio.h tones.h slist.h dhm.h \
+ pc-engine-internal.h common.h msgbook.h rw.h adsp.h random.h xtea.h \
+ cast-128.h blowfish.h camellia.h twofish.h recording.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/pc-engine.c
+
+stun.o: stun.c stun.h rw.h udp.h msgbook.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/stun.c
+
+nc.o: nc.c nc.h config.h common.h msgbook.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/nc.c
+
+input.o: input.c input.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/input.c
+
+audio.o: audio.c audio.h common.h msgbook.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/audio.c
+
+udp.o: udp.c udp.h common.h msgbook.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/udp.c
+
+recording.o: recording.c recording.h rw.h common.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/recording.c
+
+dhm.o: dhm.c dhm.h rw.h md5.h random.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/dhm.c
+
+random.o: random.c random.h rw.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/random.c
+
+twofish.o: twofish.c twofish.h rw.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/twofish.c
+
+camellia.o: camellia.c camellia.h rw.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/camellia.c
+
+blowfish.o: blowfish.c blowfish.h rw.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/blowfish.c
+
+cast-128.o: cast-128.c cast-128.h rw.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/cast-128.c
+
+xtea.o: xtea.c xtea.h rw.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/xtea.c
+
+md5.o: md5.c md5.h rw.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/md5.c
+
+msgbook.o: msgbook.c msgbook.h common.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/msgbook.c
+
+slist.o: slist.c slist.h common.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/slist.c
+
+tones.o: tones.c tones.h common.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/tones.c
+
+adsp.o: adsp.c adsp.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/adsp.c
+
+rw.o: rw.c rw.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/rw.c
+
+common.o: common.c common.h
+	$(CC) $(CFLAGS) $(DEFS) $(IDIR) -c $(srcdir)/common.c
+
+
+clean:
+	rm -f seren selftest-* $(objects) *~
+
+distclean: clean
+	rm -rf autom4te.cache config.h config.status config.log Makefile
+
+
+install:
+	$(INSTALL_PROGRAM) -d $(DESTDIR)$(bindir)
+	$(INSTALL_PROGRAM) -m 755 seren $(DESTDIR)$(bindir)
+	$(INSTALL_PROGRAM) -d $(DESTDIR)$(mandir)/man1
+	$(INSTALL_DATA) seren.1 $(DESTDIR)$(mandir)/man1
+
+uninstall:
+	rm -f $(DESTDIR)$(bindir)/seren
+	rm -f $(DESTDIR)$(mandir)/man1/seren.1
+
+
+selftest-xtea:
+	$(CC) $(CFLAGS) $(DEFS) -DSELFTEST -o $@ $(srcdir)/xtea.c $(srcdir)/rw.c && ./$@ 1 2
+
+selftest-cast-128:
+	$(CC) $(CFLAGS) $(DEFS) -DSELFTEST -o $@ $(srcdir)/cast-128.c $(srcdir)/rw.c && ./$@ 1 2
+
+selftest-blowfish:
+	$(CC) $(CFLAGS) $(DEFS) -DSELFTEST -o $@ $(srcdir)/blowfish.c $(srcdir)/rw.c && ./$@ 1 2
+
+selftest-camellia:
+	$(CC) $(CFLAGS) $(DEFS) -DSELFTEST -o $@ $(srcdir)/camellia.c $(srcdir)/rw.c && ./$@ 1 2
+
+selftest-twofish:
+	$(CC) $(CFLAGS) $(DEFS) -DSELFTEST -o $@ $(srcdir)/twofish.c $(srcdir)/rw.c && ./$@ 1 2
+
+selftest-all: selftest-xtea selftest-cast-128 selftest-blowfish selftest-camellia selftest-twofish
+
+
+.PHONY: all clean distclean install uninstall
+.PHONY: selftest-xtea selftest-cast-128 selftest-blowfish selftest-camellia selftest-twofish \
+        selftest-all

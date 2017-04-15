@@ -1,0 +1,108 @@
+version 0.0.21:
+
+	* Engine version bump
+	* Added --without-ncurses option to configure
+	* Added VPATH build functionality
+	* Added selftest targets to Makefile
+	* Added input.{h,c} for unified command parsing
+	* Added tones.{h,c}
+	* Added /f command
+	* Added twofish block cipher
+	* Added support for round trip time (RTT) estimation
+	* Added reason field to REFUSE packets
+	* Added opus packets bandwidth and channels decoding
+	* Added bw/ch informations to ncurses lateral bar
+	* Use the same encipher/decipher functions for all key sizes in camellia
+	* Renamed config file option theme to ncurses_theme
+	* nc_init() now sets print and die callbacks
+	* Fixed fifout delay (now the fifo is opened in WRONLY mode)
+	* Fixed functions prototypes in random.{h,c}
+	* Small code improvements and fixes
+
+version 0.0.20:
+
+	* Added /v command
+	* Added event_type_verbose
+	* Fixed buffer overflow in all ciphers when len is not a multiple of blocksize
+	* Improved ciphers selftest routine
+	* Factorized md5 code
+	* Fixed potential buffer overflow in packet_encrypt()
+	* Improved size check for received packets
+	* Changed prefix for functions in udp.c
+	* Other minor code changes
+
+version 0.0.19:
+
+	* Fixed terminal resizing, now the content of the window is not lost anymore
+	* Added support for input history (Up/Down keys) in ncurses gui
+	* Improved lateral bar with more information about nodes
+	* Added fcntl.h and gmp.h checks in build system
+	* Initial support for counter mode in xtea.{h,c}
+	* Small code changes and refactoring
+
+version 0.0.18:
+
+	* New protocol, not compatible with older versions!
+	* Support for node modes (clear, secure, psk)
+	* Added raw audio input and output fifos
+	* Added support for packet loss telemetry
+	* Added cast-128 block cipher
+	* Added blowfish block cipher
+	* Added camellia block cipher
+	* Added md5 hash function
+	* Added random.{h,c}
+	* Added libgmp dependency
+	* Added Diffie–Hellman–Merkle key exchange
+	* Factorized audio dsp code in adsp.{h,c}
+	* Added support for node vu-meters
+	* Improved checks for data coming from the network
+	* Added /T, /H, /X commands
+	* Changed /e command to set node mode
+	* Changed /g command to accept gain in dB
+	* Added event_type_ringtone, event_type_setmode, event_type_setalgo,
+	  event_type_setpsk and event_type_call_hangup events
+	* Fixed ncurses compilation in arch
+	* Factorized nc_scroll_input_text()
+	* Added support for nick autocomplete
+	* Added node list and vu-meters column in ncurses gui
+	* Added colored nick list based on local/remote packet losses
+	* Added -Wconversion compiler flag
+	* Fixed a lot of -Wconversion warnings
+	* Updated man page
+
+version 0.0.17:
+
+	* Changed CALL and CONNECT packets format, protocol not compatible with older versions!
+	* ncurses gui rewritten, now it supports UTF-8 input
+	* Added --enable-default-pulse option to configure
+	* Removed libncurses5-dev dependency, now only libncursesw5-dev is necessary
+	* Fixed compilation with libopus < 1.0
+	* Added event_type_autoaccept_calls and event_type_incoming_call_lost events
+	* Updated man page
+	* Fixed various messages
+	* Added -L option for setting log filename
+	* Added -N option for disabling ncurses gui
+	* Fixed high cpu usage when stdin was redirected
+	* Added /t, /C, /a commands
+
+versions up to 0.0.16:
+
+	* Lots of improvements/cleanups/refactoring/optimizations
+	* Option to autocall host on startup
+	* Option for setting encoder complexity 
+	* Added man page
+	* Support for ncurses themes
+	* Support for packet loss concealment (PLC) 
+	* Configuration file support
+	* Call recording in ogg/opus or wave
+	* Better/safer encrypted calls support
+	* Option for auto answering calls
+	* Individual nodes gain support
+	* Synthesized ringtones
+	* ITU-T E.180 calltone
+	* Callers queue
+	* STUN support
+	* Commands and event-based system for the pc-engine
+	* parole-conference-engine has been rewritten and separated from the gui
+	* First internal release forked from parole-conference-010alpha17
+

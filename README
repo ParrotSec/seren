@@ -1,0 +1,222 @@
+---------------
+0. Introduction
+---------------
+
+Hello and thank you for downloading my conference VoIP program!
+
+Seren is a simple VoIP program based on the Opus codec that allows you to create
+a voice conference from the terminal, with up to 10 participants, without having
+to register accounts, exchange emails, or add people to contact lists. All you
+need to join an existing conference is the host name or IP address of one of the
+participants.
+Seren creates a dynamic peer-to-peer network of equivalent nodes which exchange
+text and audio data using a udp connection, and offers the user the ability to
+change the quality/bitrate on the fly, encrypt the traffic and record the calls.
+
+----------
+1. License
+----------
+
+Seren is released under the GNU GPLv3 license.
+
+-----------------------
+2. How to compile Seren
+-----------------------
+
+Seren is written in C and uses alsa to access the sound card and libopus to
+compress the audio stream. In order to compile Seren you need:
+
+  1) gcc
+  2) make
+  3) libasound
+  4) libopus
+  5) libogg
+  6) libgmp
+  7) libncurses
+
+Under Debian/Ubuntu all the dependencies should be satisfied by installing
+the following packages:
+
+build-essential libasound2-dev libopus-dev libogg-dev libgmp-dev libncursesw5-dev
+
+If your distribution is too old and does not provide a package for libopus, you
+can build it from source by running the following commands:
+
+$ mkdir src
+$ cd src
+$ wget http://downloads.xiph.org/releases/opus/opus-1.1.tar.gz
+$ tar xvf opus-1.1.tar.gz
+$ cd opus-1.1/
+$ ./configure
+$ make
+$ sudo make install
+$ sudo ldconfig
+# you can later uninstall with:
+#$ sudo make uninstall
+
+Once the dependencies are satisfied, you can compile the program simply with:
+
+$ ./configure
+$ make
+
+The resulting binary can be run from the local directory or can be installed
+with:
+
+$ make install
+
+To clean the build directory run:
+
+$ make clean
+
+or if you want to reset the configuration before running the configure again:
+
+$ make distclean
+
+--------------
+3. Using Seren
+--------------
+
+You can access the help by running:
+
+$ ./seren -h
+
+This will show you a list of command line options. The values in parentheses on
+the right are the default values. Refer to the man page for more information
+about these options.
+To create a conference the first node starts the program with:
+
+$ ./seren -n NICK
+
+where NICK is of course your nickname. If you do not specify the nickname it
+will default to your login name. The program will now listen for incoming
+connections on udp port 8110 (you can change this port with -p option).
+Note that if you are using a router from a home connection and want people to
+be able to call you from the outside, you'll most likely need to forward this
+port.
+
+On the status bar on the bottom, you can see a logarithmic vu-meter and a peak
+indicator for the microphone input. Make sure that the peak never reaches 100%
+and that the vu-meter moves enough when you speak into the microphone.
+
+People that want to join a conference will need the IP address or host name of
+one of the participants. After starting the program with the same command line
+as above, they will type /c host[:port] to connect to an active conference,
+where host can be either an IP address or a hostname, and port can be omitted
+when using the standard 8110 port.
+
+On the right part of the window there is the list of the participants, together
+with the logarithmic vu-meter indicating their audio level. This allows you
+to easily understand who is talking. Also, the nicknames are shown in different
+colors depending on their packet loss: the green, yellow and red colors refers
+respectively to a packet loss <= 0.5 %, between 0.5% and 5% and > 5%.
+
+While the program is running, type /h to access the online help. The available
+commands include /i or F4 to print information about the status of the program
+and the network/participants, /m or F5 to mute the microphone, /g to set a
+software gain for the microphone and /b to change bitrate on the fly.
+
+----------------------------
+4. Node modes and encryption
+----------------------------
+
+Seren supports three basic modes of operation:
+
+1) Clear mode: both traffic and handshake are sent in clear.
+2) Secure mode: traffic is encrypted but the initial handshake is sent in
+   clear. It uses DHM key exchange and a different key for each link.
+3) Pre-shared key (PSK) mode: everything is encrypted using a pre-shared key.
+
+Depending on which mode is currently selected, the letters "CLR", "SEC" or "PSK"
+will appear in the bottom left corner of the window.
+
+The default mode of operation is Secure. To set the mode of operation of your
+node you can use the /e command, usually before joining or hosting a conference.
+If necessary, though, these modes can be changed on the fly while the conference
+is running, providing that all the nodes switch mode within 6 seconds to avoid
+node timeouts.
+
+When using the Secure mode, Seren by default uses the XTEA block cipher in cbc
+mode (unless this is changed with /X before calling a host), together with a
+128-bit key exchanged using Diffie–Hellman–Merkle algorithm.
+
+When using the PSK mode the user has a choice of five different block ciphers
+(XTEA, CAST-128, Blowfish, Camellia and Twofish) and a symmetric key with
+maximum length of 384-bit. People wanting to make an encrypted conferences using
+this mode must choose the same block cipher and the same common key. The typical
+procedure to use this mode is as follows:
+
+1) Choose PSK mode with /e
+2) Choose the encryption algorithm with /X
+3) Set the key with /x. Note that with this command the key is passed to Seren
+   as a hexadecimal number. For example a 128-bit key can be represented by a
+   32-char hexadecimal number (a key composed of less than 32 characters will be
+   padded with '0's)
+3) Use /c to join a conference or wait for other nodes to call you
+
+Note that a 128-bit key could be created from a passphrase with the following
+command:
+
+$ echo -n "put passphrase here" | md5sum | cut -b 1-32
+
+------------------------------
+5. Log and configuration files
+------------------------------
+
+Seren creates a log file in $HOME/.seren/seren.log , where it reports everything
+the program does. Inspecting this file can be useful in case you encounter any
+problem. In such situations, using -v -v on the command line to increase the
+verbosity level can also help understanding what went wrong.
+
+Options for Seren can be specified on the command line or by using the
+configuration file in $HOME/.seren/seren.conf . Options specified on the command
+line take precedence over the ones in the configuration file.
+
+----------------
+6. Audio options
+----------------
+
+Seren uses alsa for audio capture and playback. You can specify the alsa device
+to use with -d option. Note that internally Seren uses the following format:
+2 channels, 48000Hz sampling rate, s16_le format. If your sound card does not
+support this format you're likely to get an error when alsa is initialized.
+In this case try 'plughw:0,0' instead of the defaul device 'hw:0,0'.
+Use the option -D to select a capture device different from the playback device.
+It should be possible to use pulseaudio with both options using the device
+'pulse'.
+
+To choose the initial bitrate of the compressed Opus stream, option -b can be
+used. The default is 16000 bit/s and should give very good quality with a
+typical bandwidth of 2 kbyte/s for each stream.
+The complexity of the Opus encoder can be set via -C option.
+
+Seren also supports audio input and output via a pair of fifos. Refer to the
+man page for more information about these fifos.
+
+------------------
+7. Calls recording
+------------------
+
+To start recording a call to a ogg/opus file you can use the /r command.
+A message containing the name of the file will be printed to inform you that the
+recording has been started, and the letters "REC" will appear in red on the
+bottom left corner of the window, next to the call timer. Type /r again to end
+the recording.
+It is also possible to record in wave format using the /R command.
+
+---------------
+8. Raspberry Pi
+---------------
+
+Seren has been tested and works quite well on the Raspberry Pi, provided that
+you do the following things:
+
+  1) Configure libopus with "./configure --enable-fixed-point" to select the
+     fixed-point implementation and enable the assembly optimizations.
+  2) Launch Seren with command line option "-C 0" to select the lowest
+     complexity for the Opus Encoder; this will make Seren run much faster.
+
+---------
+9. Author
+---------
+
+Giorgio Vazzana <mywing81@gmail.com>

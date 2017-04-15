@@ -1,0 +1,3 @@
+Known bugs/problems:
+
+* With some routers the udp hole punching mechanism implemented may not work

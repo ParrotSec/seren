@@ -1,0 +1,95 @@
+.TH seren 1 "December 2014"
+.SH NAME
+Seren \- A simple VoIP program to create conferences from the terminal
+.SH SYNOPSIS
+.B seren
+[option...]
+.SH DESCRIPTION
+.PP
+Seren is a simple VoIP program based on the Opus codec that allows you to create
+a voice conference from the terminal, with up to 10 participants, without having
+to register accounts, exchange emails, or add people to contact lists. All you
+need to join an existing conference is the host name or IP address of one of the
+participants.
+Seren creates a dynamic peer-to-peer network of equivalent nodes which exchange
+text and audio data using a udp connection, and offers the user the ability to
+change the quality/bitrate on the fly, encrypt the traffic and record the calls.
+.PP
+This manual page documents briefly the
+.B seren
+command. Please refer to the README file to get more information on how to use Seren.
+.SH OPTIONS
+A summary of command line options is included below.
+.TP
+.BI \-h
+Print help, showing a list of available command line options. The values in
+parentheses on the right are the default values.
+.TP
+.BI \-v
+Increment verbosity level.
+.B \-v
+enables verbose messages and
+.B \-v \-v
+enables verbose and debug messages.
+.TP
+.BI \-L " logfile"
+Send log messages to logfile (default: $HOME/.seren/seren.log)
+.TP
+.BI \-N
+Disable ncurses interface and run Seren as a pure command line application.
+.TP
+.BI \-t " theme"
+Set ncurses theme: 0-simple, 1-dark, 2-clear (default: 1).
+.TP
+.BI \-n " nick"
+Set nickname (default: login name).
+.TP
+.BI \-p " port"
+Set udp listening port (default: 8110).
+.TP
+.BI \-b " bitrate"
+Set Opus encoding bitrate in bit/s (default: 16000).
+.TP
+.BI \-C " complexity"
+Set Opus encoding complexity. The supported range is 0-10 inclusive with 10 representing the highest complexity.
+Small values will make Seren run faster, at the expense of quality. You may want to lower this value if you are
+on a embedded system like the Raspberry Pi or if you notice that Seren is using up all your cpu time (default: 10).
+.TP
+.BI \-d " audiodev"
+Set alsa playback audio device. If you get an error with the device hw:0,0 try prepending plug to the device
+name, es. plughw:0,0. If your system has pulseaudio installed, it should be possible to specify 'pulse' to use it.
+(default: depends on how Seren was configured, see the output of -h option). 
+.TP
+.BI \-D " audiodev"
+Set alsa capture audio device. Useful if you want to use two different audio devices for playback and capture.
+(default: same value specified for playback device)
+.TP
+.BI \-c " host[:port]"
+Automatically call the specified host on startup.
+.TP
+.BI \-a
+Autoaccept calls. If this options is enabled Seren will accept every incoming call without asking the user first.
+.TP
+.BI \-S
+Disable STUN to retrieve the external IP address.
+.SH "FILES"
+.TP
+\fI$HOME/.seren/seren.log\fP
+Log file.
+.TP
+\fI$HOME/.seren/seren.conf\fP
+Configuration file.
+.TP
+\fI$HOME/.seren/history\fP
+Command history file.
+.TP
+\fI$HOME/.seren/fifo_in\fP
+Input fifo: accepts raw audio in 48000Hz/2ch/s16_le format. When fifos are enabled (using the /f command), writing
+to this fifo will make Seren mix this pcm audio signal with the one coming from the sound card. Useful if you want
+to transmit pre-recorded audio together with your own voice.
+.TP
+\fI$HOME/.seren/fifo_out\fP
+Output fifo: provides raw audio in 48000Hz/2ch/s16_le format. When fifos are enabled (using the /f command), reading
+from this fifo will allow you to get the pcm audio signal of the conference and pipe it to another process.
+.SH AUTHOR
+Written by Giorgio Vazzana <mywing81@gmail.com>.
